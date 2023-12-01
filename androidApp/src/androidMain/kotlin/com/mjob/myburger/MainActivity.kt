@@ -1,4 +1,4 @@
-package com.mjob.pizzamo
+package com.mjob.myburger
 
 import MainView
 import android.os.Bundle

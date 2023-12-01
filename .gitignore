@@ -15,3 +15,7 @@ iosApp/iosApp.xcodeproj/*
 shared/shared.podspec
 /iosApp/Configuration/Config.xcconfig
 /shared/src/commonMain/kotlin/config/Config.kt
+/androidApp/local.properties
+/androidApp/.idea/gradle.xml
+/androidApp/.idea/misc.xml
+/androidApp/.idea/vcs.xml

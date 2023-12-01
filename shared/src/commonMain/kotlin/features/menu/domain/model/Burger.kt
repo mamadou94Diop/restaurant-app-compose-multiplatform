@@ -7,5 +7,4 @@ data class Burger(
     val ingredients: List<Ingredient>,
     val name: String,
     val price: Double,
-    val isFavorite: Boolean,
 )

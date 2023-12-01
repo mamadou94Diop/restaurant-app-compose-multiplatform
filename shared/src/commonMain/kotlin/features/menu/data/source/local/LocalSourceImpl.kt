@@ -20,17 +20,6 @@ class LocalSourceImpl(private val realm: Realm) : LocalSource {
         }
     }
 
-
-    override fun setFavorite(pizza: BurgerEntity) {
-        realm.query<BurgerEntity>(BurgerEntity::class, "id == $0", pizza.id)
-            .first()
-            .find()
-            ?.also { pizzaToUpdate ->
-                realm.writeBlocking {
-                }
-            }
-    }
-
     override fun deleteAllBurgers() {
         realm.writeBlocking {
             val query = this.query<BurgerEntity>(BurgerEntity::class)

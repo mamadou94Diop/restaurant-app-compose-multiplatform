@@ -14,7 +14,6 @@ fun BurgerDto.toDomain() = Burger(
     image = images.filterNot { it.lg.isNullOrEmpty() && it.sm.isNullOrEmpty() }.firstOrNull()?.lg ?: images.firstOrNull()?.sm.orEmpty(),
     name = name,
     price = price,
-    isFavorite = false,
     ingredients = ingredients.map { it.toDomain() },
 )
 
@@ -24,8 +23,10 @@ fun BurgerEntity.toDomain() = Burger(
     image = image,
     name = name,
     price = price,
-    isFavorite = isFavorite, ingredients = listOf()
+    ingredients =  ingredients.map { ingredientEntity: IngredientEntity ->  ingredientEntity.toDomain() }
 )
+
+fun IngredientEntity.toDomain() = Ingredient(id = id, image = image, name = name)
 
 fun Burger.toEntity(): BurgerEntity {
     val burger = this
@@ -34,7 +35,6 @@ fun Burger.toEntity(): BurgerEntity {
         description = burger.description
         image = burger.image
         name = burger.name
-        isFavorite = burger.isFavorite
         price = burger.price
         ingredients = burger.ingredients.map { it.toEntity() }.toRealmList()
     }

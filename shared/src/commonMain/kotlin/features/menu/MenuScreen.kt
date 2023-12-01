@@ -16,7 +16,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -39,6 +41,7 @@ import features.common.UIState
 import features.common.ui.ErrorView
 import features.common.ui.LoadingView
 import features.menu.domain.model.Burger
+import features.menu.domain.model.Menu
 
 @Composable
 fun MenuScreen(viewModel: MenuViewModel, paddingValues: PaddingValues) {
@@ -50,34 +53,40 @@ fun MenuScreen(viewModel: MenuViewModel, paddingValues: PaddingValues) {
         when (state.value) {
             is UIState.Loading -> LoadingView()
             is UIState.Error -> ErrorView(
-                message = (state.value as UIState.Error<List<Burger>>).message,
+                message = (state.value as UIState.Error<Menu>).message,
                 retryMessage = "Retry",
                 onRetry = {
                     viewModel.getBurgers()
                 })
 
-            is UIState.Success -> BurgerListView(
-                (state.value as UIState.Success<List<Burger>>).data
-            )
+            is UIState.Success -> (state.value as UIState.Success<Menu>).data.apply {
+                BurgerListView(
+                    burgers = burgers,
+                    favorites = favorites,
+                    toggleFavorite = { burger ->
+                        viewModel.toggleFavorite(burger)
+                    }
+                )
+            }
         }
 
     }
 }
 
 @Composable
-fun BurgerListView(burgers: List<Burger>) {
+fun BurgerListView(burgers: List<Burger>, favorites: List<Int>, toggleFavorite: (Burger) -> Unit) {
     LazyColumn(
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(burgers) { burger ->
-            BurgerItem(burger)
+            BurgerItem(burger, favorites.contains(burger.id), toggleFavorite)
         }
     }
 }
 
 @Composable
-fun BurgerItem(burger: Burger) {
+fun BurgerItem(burger: Burger, isFavorite: Boolean, toggleFavorite: (Burger) -> Unit) {
     val painter = rememberImagePainter(burger.image)
     Card(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)) {
         Column(
@@ -102,10 +111,15 @@ fun BurgerItem(burger: Burger) {
                 )
                 IconButton(
                     onClick = {
-
+                      toggleFavorite.invoke(burger)
                     },
                     content = {
-                        Icon(Icons.Filled.FavoriteBorder, contentDescription = null)
+                        if (isFavorite) {
+                            Icon(Icons.Filled.Favorite, contentDescription = null)
+
+                        } else {
+                            Icon(Icons.Filled.FavoriteBorder, contentDescription = null)
+                        }
                     })
             }
             Text(

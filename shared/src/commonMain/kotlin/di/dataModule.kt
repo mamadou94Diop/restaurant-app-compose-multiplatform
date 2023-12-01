@@ -1,7 +1,12 @@
 package di
 
+import features.favorite.data.FavoriteRepository
+import features.favorite.data.FavoriteRepositoryImpl
+import features.favorite.data.source.FavoriteDataSource
+import features.favorite.data.source.local.LocalFavoriteDataSource
+import features.favorite.data.source.local.entity.FavoriteBurgerEntity
 import features.menu.data.MenuRepository
-import features.menu.data.source.MenuRepositoryImpl
+import features.menu.data.MenuRepositoryImpl
 import features.menu.data.source.local.LocalSource
 import features.menu.data.source.local.LocalSourceImpl
 import features.menu.data.source.local.entity.BurgerEntity
@@ -27,12 +32,17 @@ val dataModule = module {
                 schema = setOf(
                     BurgerEntity::class,
                     IngredientEntity::class,
+                    FavoriteBurgerEntity::class,
                 )
             )
         )
     }
+    single<CoroutineDispatcher> { Dispatchers.IO }
     single<LocalSource> { LocalSourceImpl(get()) }
     single<RemoteSource> { RemoteSourceImpl(get()) }
-    single<CoroutineDispatcher> { Dispatchers.IO }
     single<MenuRepository> { MenuRepositoryImpl(get(), get(), get()) }
+
+    single<FavoriteDataSource> { LocalFavoriteDataSource(get()) }
+    single<FavoriteRepository> { FavoriteRepositoryImpl(get()) }
+
 }

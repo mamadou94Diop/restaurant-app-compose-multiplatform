@@ -1,14 +1,17 @@
-package features.menu.data.source
+package features.menu.data
 
-import features.menu.data.MenuRepository
 import features.menu.data.source.local.LocalSource
 import features.menu.data.source.remote.RemoteSource
 import features.menu.data.source.remote.dto.BurgerDto
+import features.menu.data.source.toDomain
+import features.menu.data.source.toEntity
 import features.menu.domain.model.Burger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import org.mobilenativefoundation.store.store5.Fetcher
 import org.mobilenativefoundation.store.store5.SourceOfTruth
 import org.mobilenativefoundation.store.store5.StoreBuilder
@@ -30,7 +33,6 @@ class MenuRepositoryImpl(
                 reader = { _: String ->
                     flow<List<Burger>> {
                         localSource.getBurgers().collect { burgers ->
-                            println(burgers)
                             emit(burgers.map { it.toDomain() })
                         }
                     }
@@ -47,13 +49,15 @@ class MenuRepositoryImpl(
 
     override fun getBurgers(): Flow<Result<List<Burger>>> =
         flow<Result<List<Burger>>> {
-            storeBurger.stream(StoreReadRequest.cached(key = "burgers", refresh = false))
+            storeBurger.stream(StoreReadRequest.cached(key = "burgers", refresh = true))
                 .collect {
                     when (it) {
                         is StoreReadResponse.Data -> {
                             emit(Result.success(it.value))
                         }
-                        is StoreReadResponse.Error.Exception -> emit(Result.failure(it.error))
+                        is StoreReadResponse.Error.Exception -> {
+                            emit(Result.failure(it.error))
+                        }
                         is StoreReadResponse.Error.Message -> emit(Result.failure(Exception(it.message)))
                         is StoreReadResponse.NoNewData -> emit(Result.success(emptyList()))
                         is StoreReadResponse.Loading -> {
