@@ -18,7 +18,6 @@ import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -48,7 +47,7 @@ fun MenuScreen(viewModel: MenuViewModel, paddingValues: PaddingValues) {
     Column(
         modifier = Modifier.padding(paddingValues).fillMaxSize()
     ) {
-        val state = viewModel.statePizzas.collectAsState()
+        val state = viewModel.stateMenu.collectAsState()
 
         when (state.value) {
             is UIState.Loading -> LoadingView()

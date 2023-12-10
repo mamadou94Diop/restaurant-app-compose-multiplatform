@@ -15,9 +15,9 @@ class MenuViewModel(
     private val useCase: BaseUseCase<Menu>,
     private val favoriteRepository: FavoriteRepository
 ) : ViewModel() {
-    private val _statePizzas =
+    private val _stateMenu =
         MutableStateFlow<UIState<Menu>>(UIState.Loading)
-    val statePizzas: StateFlow<UIState<Menu>> = _statePizzas
+    val stateMenu: StateFlow<UIState<Menu>> = _stateMenu
 
     init {
         getBurgers()
@@ -25,12 +25,12 @@ class MenuViewModel(
 
     fun getBurgers() {
         viewModelScope.launch {
-            _statePizzas.value = UIState.Loading
+            _stateMenu.value = UIState.Loading
             useCase.execute()
                 .collect { result ->
                     result
                         .onSuccess {
-                            _statePizzas.value = UIState.Success(
+                            _stateMenu.value = UIState.Success(
                                 result.getOrDefault(
                                     Menu(
                                         burgers = listOf(),
@@ -40,7 +40,7 @@ class MenuViewModel(
                             )
                         }
                         .onFailure {
-                            _statePizzas.value =
+                            _stateMenu.value =
                                 UIState.Error(result.exceptionOrNull()?.message.orEmpty())
                         }
                 }

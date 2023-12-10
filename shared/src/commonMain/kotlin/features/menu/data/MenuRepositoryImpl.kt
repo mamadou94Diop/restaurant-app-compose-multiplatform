@@ -46,18 +46,19 @@ class MenuRepositoryImpl(
             )
         ).build()
 
-
     override fun getBurgers(): Flow<Result<List<Burger>>> =
         flow<Result<List<Burger>>> {
-            storeBurger.stream(StoreReadRequest.cached(key = "burgers", refresh = true))
+            storeBurger.stream(StoreReadRequest.cached(key = "burgers", refresh = false))
                 .collect {
                     when (it) {
                         is StoreReadResponse.Data -> {
                             emit(Result.success(it.value))
                         }
+
                         is StoreReadResponse.Error.Exception -> {
                             emit(Result.failure(it.error))
                         }
+
                         is StoreReadResponse.Error.Message -> emit(Result.failure(Exception(it.message)))
                         is StoreReadResponse.NoNewData -> emit(Result.success(emptyList()))
                         is StoreReadResponse.Loading -> {

@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import features.cart.CartScreen
 import features.cart.CartViewModel
 import features.favorite.FavoriteScreen
+import features.favorite.FavoriteViewModel
 import features.menu.MenuScreen
 import features.menu.MenuViewModel
 import features.order.OrderScreen
@@ -81,8 +82,8 @@ fun NavContent(navigator: Navigator, paddingValues: PaddingValues) {
         }
 
         scene(NavigationItem.Favorite.route) {
-            //val viewModel = koinViewModel(CartViewModel::class)
-            FavoriteScreen(paddingValues)
+            val viewModel = koinViewModel(FavoriteViewModel::class)
+            FavoriteScreen(viewModel, paddingValues)
         }
     }
 }
