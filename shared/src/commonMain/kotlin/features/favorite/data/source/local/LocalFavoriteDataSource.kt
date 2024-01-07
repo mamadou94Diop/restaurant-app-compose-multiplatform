@@ -21,18 +21,14 @@ class LocalFavoriteDataSource(private val realm: Realm) : FavoriteDataSource {
                 .find()
                 ?.let { burgerToRemove ->
                     realm.writeBlocking {
-                        delete(burgerToRemove)
+                        findLatest(burgerToRemove)
+                            ?.also {
+                                delete(it)
+                            }
                     }
                 } ?: kotlin.run {
                 realm.writeBlocking {
-                    copyToRealm(FavoriteBurgerEntity().apply {
-                        this.id = favorite.id
-                        this.name = favorite.name
-                        this.description = favorite.description
-                        this.name = favorite.name
-                        this.price = favorite.price
-                        this.ingredients = favorite.ingredients
-                    })
+                    copyToRealm(favorite)
                 }
             }
             emit(true)

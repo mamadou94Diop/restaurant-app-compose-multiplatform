@@ -50,7 +50,7 @@ fun MenuScreen(viewModel: MenuViewModel, paddingValues: PaddingValues) {
         val state = viewModel.stateMenu.collectAsState()
 
         when (state.value) {
-            is UIState.Loading -> LoadingView()
+            UIState.Loading -> LoadingView()
             is UIState.Error -> ErrorView(
                 message = (state.value as UIState.Error<Menu>).message,
                 retryMessage = "Retry",
@@ -110,7 +110,7 @@ fun BurgerItem(burger: Burger, isFavorite: Boolean, toggleFavorite: (Burger) -> 
                 )
                 IconButton(
                     onClick = {
-                      toggleFavorite.invoke(burger)
+                        toggleFavorite.invoke(burger)
                     },
                     content = {
                         if (isFavorite) {
@@ -129,7 +129,9 @@ fun BurgerItem(burger: Burger, isFavorite: Boolean, toggleFavorite: (Burger) -> 
             )
 
             Spacer(Modifier.height(8.dp))
-            Button(onClick = {}) {
+            Button(onClick = {
+
+            }) {
                 Text("Add to cart")
             }
 

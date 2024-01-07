@@ -53,7 +53,21 @@ class MenuViewModel(
             favoriteRepository.setFavorite(burger)
                 .collect { isToggleSuccessful ->
                     if (isToggleSuccessful) {
+                        _stateMenu.apply {
+                            val currentState = this.value as UIState.Success
 
+                            val (_, favorites) = currentState.data
+
+                            val updatedFavorites = if (favorites.contains(burger.id)) {
+                                favorites.minus(burger.id)
+                            } else {
+                                favorites.plus(burger.id)
+                            }
+
+                            value = currentState.copy(
+                                data = currentState.data.copy(favorites = updatedFavorites)
+                            )
+                        }
                     }
                 }
         }
